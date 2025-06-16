@@ -1,0 +1,15 @@
+[project]
+name = "clybschromanodes"
+description = "A small collection of nodes intended for use with Lodestone Rock's Chroma model, for ComfyUI."
+version = "1.0.0"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/Clybius/ComfyUI-ClybsChromaNodes"
+#  Used by Comfy Registry https://registry.comfy.org
+
+[tool.comfy]
+PublisherId = "clybius"
+DisplayName = "ComfyUI-ClybsChromaNodes"
+Icon = ""
+includes = []
