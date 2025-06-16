@@ -136,7 +136,7 @@ def chroma_doublestream_forward_nag(self, img, txt, pe, vec, attn_mask=None):
     
     # Blend the original positive output with the guided output
     guided_img_attn_output = nag_guidance * self.nag_alpha + x_positive * (1 - self.nag_alpha)
-    guided_txt_attn_output = nag_txt_guidance * self.nag_alpha + x_txt_negative * (1 - self.nag_alpha)
+    guided_txt_attn_output = nag_txt_guidance * self.nag_alpha + x_txt_positive * (1 - self.nag_alpha)
 
     # --- 3. Complete the rest of the block for the conditional part ---
     
