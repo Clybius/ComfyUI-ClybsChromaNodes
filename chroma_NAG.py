@@ -203,7 +203,7 @@ class ChromaNAG:
             return (model,)
         
         device = mm.get_torch_device()
-        dtype = mm.unet_dtype()
+        #dtype = mm.unet_dtype()
         
         # The NAG context is derived from the positive prompt's embeddings.
         # For FLUX/Chroma, the conditioning input is already embedded.
@@ -213,7 +213,7 @@ class ChromaNAG:
         model_clone = model.clone()
         diffusion_model = model_clone.get_model_object("diffusion_model")
         diffusion_model.txt_in.to(device)
-        txt = diffusion_model.txt_in(nag_context.to(device, dtype))
+        txt = diffusion_model.txt_in(nag_context.to(device))
 
         # Chroma models have `double_blocks` where image and text tokens interact.
         # This is the equivalent of a cross-attention stage in other models.
