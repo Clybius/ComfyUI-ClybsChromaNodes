@@ -186,8 +186,8 @@ class ChromaNAG:
         return {
             "required": {
                 "model": ("MODEL",),
-                "conditioning": ("CONDITIONING",), # Positive conditioning
-                "nag_scale": ("FLOAT", {"default": 11.0, "min": 0.0, "max": 100.0, "step": 0.01}),
+                "conditioning": ("CONDITIONING",),
+                "nag_scale": ("FLOAT", {"default": 5.0, "min": -100.0, "max": 100.0, "step": 0.01}),
                 "nag_alpha": ("FLOAT", {"default": 0.25, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "nag_tau": ("FLOAT", {"default": 2.5, "min": 0.0, "max": 10.0, "step": 0.01}),
            }
@@ -205,7 +205,7 @@ class ChromaNAG:
         device = mm.get_torch_device()
         #dtype = mm.unet_dtype()
         
-        # The NAG context is derived from the positive prompt's embeddings.
+        # The NAG context is derived from the negative prompt's embeddings.
         # For FLUX/Chroma, the conditioning input is already embedded.
         # Shape: [1, sequence_length, embedding_dim]
         nag_context = conditioning[0][0].clone()
@@ -213,7 +213,7 @@ class ChromaNAG:
         model_clone = model.clone()
         diffusion_model = model_clone.get_model_object("diffusion_model")
         diffusion_model.txt_in.to(device)
-        txt = diffusion_model.txt_in(nag_context.to(device))
+        txt = diffusion_model.txt_in(nag_context.to(device, diffusion_model.txt_in.dtype))
 
         # Chroma models have `double_blocks` where image and text tokens interact.
         # This is the equivalent of a cross-attention stage in other models.
