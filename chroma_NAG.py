@@ -213,7 +213,9 @@ class ChromaNAG:
         model_clone = model.clone()
         diffusion_model = model_clone.get_model_object("diffusion_model")
         diffusion_model.txt_in.to(device)
-        txt = diffusion_model.txt_in(nag_context.to(device, mm.text_encoder_dtype()))
+        # Get the actual dtype of the txt_in layer weights
+        target_dtype = next(diffusion_model.txt_in.parameters()).dtype
+        txt = diffusion_model.txt_in(nag_context.to(device, target_dtype))
 
         # Chroma models have `double_blocks` where image and text tokens interact.
         # This is the equivalent of a cross-attention stage in other models.
