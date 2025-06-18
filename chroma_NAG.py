@@ -44,7 +44,7 @@ def match_seq_len(tensor_to_resize, reference_tensor):
         return F.pad(tensor_to_resize, padding, "constant", 0)
 
 # This new forward function will contain the NAG logic for Chroma's DoubleStreamBlock.
-def chroma_doublestream_forward_nag(self, img, txt, pe, vec, attn_mask=None):
+def chroma_doublestream_forward_nag(self, img, txt, pe, vec=None, attn_mask=None, distill_vec=None):
     """
     A patched forward function for a DoubleStreamBlock that incorporates Normalized Attention Guidance.
     
@@ -59,6 +59,8 @@ def chroma_doublestream_forward_nag(self, img, txt, pe, vec, attn_mask=None):
            to create a final, guided attention result for the image tokens.
         d. The rest of the block's operations (MLP, etc.) proceed with this guided result.
     """
+    if distill_vec is not None:
+        vec = distill_vec
     # Deconstruct modulation vectors
     (img_mod1, img_mod2), (txt_mod1, txt_mod2) = vec
 
@@ -213,7 +215,9 @@ class ChromaNAG:
         model_clone = model.clone()
         diffusion_model = model_clone.get_model_object("diffusion_model")
         diffusion_model.txt_in.to(device)
-        txt = diffusion_model.txt_in(nag_context.to(device, mm.text_encoder_dtype()))
+        # Get the actual dtype of the txt_in layer weights
+        target_dtype = next(diffusion_model.txt_in.parameters()).dtype
+        txt = diffusion_model.txt_in(nag_context.to(device, target_dtype))
 
         # Chroma models have `double_blocks` where image and text tokens interact.
         # This is the equivalent of a cross-attention stage in other models.
