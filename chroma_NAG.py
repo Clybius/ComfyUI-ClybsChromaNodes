@@ -44,7 +44,7 @@ def match_seq_len(tensor_to_resize, reference_tensor):
         return F.pad(tensor_to_resize, padding, "constant", 0)
 
 # This new forward function will contain the NAG logic for Chroma's DoubleStreamBlock.
-def chroma_doublestream_forward_nag(self, img, txt, pe, vec, attn_mask=None):
+def chroma_doublestream_forward_nag(self, img, txt, pe, vec=None, attn_mask=None, distill_vec=None):
     """
     A patched forward function for a DoubleStreamBlock that incorporates Normalized Attention Guidance.
     
@@ -60,6 +60,9 @@ def chroma_doublestream_forward_nag(self, img, txt, pe, vec, attn_mask=None):
         d. The rest of the block's operations (MLP, etc.) proceed with this guided result.
     """
     # Deconstruct modulation vectors
+    if distill_vec is not None:
+        vec = distill_vec
+        
     (img_mod1, img_mod2), (txt_mod1, txt_mod2) = vec
 
     
