@@ -1,5 +1,6 @@
 import numpy
 import torch
+from comfy.samplers import SchedulerHandler, SCHEDULER_HANDLERS, SCHEDULER_NAMES
 
 def inverse_squared_scheduler(model_sampling, steps):
     total_timesteps = (len(model_sampling.sigmas) - 1)
@@ -55,21 +56,12 @@ class PrintSigmas:
         print(sigmas)
         return (sigmas, )
 
-def add_schedulers():
-    from comfy.samplers import KSampler, k_diffusion_sampling
-    added = 0
-    for scheduler in extra_schedulers: #getattr(self, "sample_{}".format(extra_samplers))
-        if scheduler not in KSampler.SCHEDULERS:
-            try:
-                idx = KSampler.SCHEDULERS.index("ddim_uniform") # Last item in the samplers list
-                KSampler.SCHEDULERS.insert(idx+1, scheduler) # Add our custom samplers
-                setattr(k_diffusion_sampling, "get_sigmas_{}".format(scheduler), extra_schedulers[scheduler])
-                added += 1
-            except ValueError as err:
-                pass
-    if added > 0:
-        import importlib
-        importlib.reload(k_diffusion_sampling)
+scheduler_name = "inverse_squared"
+if scheduler_name not in SCHEDULER_HANDLERS:
+    scheduler_handler = SchedulerHandler(handler=inverse_squared_scheduler, use_ms=True)
+    SCHEDULER_HANDLERS[scheduler_name] = scheduler_handler
+    if scheduler_name not in SCHEDULER_NAMES:
+        SCHEDULER_NAMES.append(scheduler_name)
 
 extra_schedulers = {
     "inverse_squared": inverse_squared_scheduler,
