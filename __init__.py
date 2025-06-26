@@ -4,7 +4,6 @@ from . import clyb_Samplers
 from . import clyb_Schedulers
 
 clyb_Samplers.add_samplers()
-clyb_Schedulers.add_schedulers()
 
 NODE_CLASS_MAPPINGS = {
     "ChromaNAG": chroma_NAG.ChromaNAG,
