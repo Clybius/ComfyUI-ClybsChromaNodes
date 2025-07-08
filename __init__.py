@@ -6,7 +6,6 @@ from . import clyb_Schedulers
 clyb_Samplers.add_samplers()
 
 NODE_CLASS_MAPPINGS = {
-    "ChromaNAG": chroma_NAG.ChromaNAG,
     "ClybGuidance": clyb_Guidance.ClybGuidance,
     "SamplerClyb_BDF": clyb_Samplers.SamplerClyb_BDF,
     "InverseSquaredScheduler": clyb_Schedulers.InverseSquaredScheduler,
@@ -14,7 +13,6 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "ChromaNAG": "ChromaNAG",
     "ClybGuidance": "ClybGuidance",
     "SamplerClyb_BDF": "SamplerClyb_BDF",
     "InverseSquaredScheduler": "InverseSquaredScheduler",
