@@ -124,7 +124,7 @@ def _construct_vandermonde_flow(history, sigma_ref, max_order, device, dtype):
     return R
 
 
-def _solve_flow_coefficients(R, h_n, method="equilibration", diag_weight=1.0):
+def _solve_flow_coefficients(R, h_n, method="diagonal", diag_weight=1.0):
     """
     Solve for B coefficients using either two-sided equilibration or diagonal-dominant regularization.
 
