@@ -12,6 +12,7 @@ NODE_CLASS_MAPPINGS = {
     # Samplers
     "SamplerClyb_BDF": clyb_Samplers.SamplerClyb_BDF,
     "SamplerTaylorFlow": clyb_Samplers.SamplerTaylorFlow,
+    "SamplerClyb_GeomExtrap": clyb_Samplers.SamplerClyb_GeomExtrap,
     "SamplerWrapperCFGPP": clyb_Samplers.SamplerWrapperCFGPP,
     # Schedulers
     "InverseSquaredScheduler": clyb_Schedulers.InverseSquaredScheduler,
@@ -27,6 +28,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     # Samplers
     "SamplerClyb_BDF": "SamplerClyb_BDF",
     "SamplerTaylorFlow": "SamplerTaylorFlow",
+    "SamplerClyb_GeomExtrap": "SamplerClyb_GeomExtrap",
     "SamplerWrapperCFGPP": "SamplerWrapperCFGPP",
     # Schedulers
     "InverseSquaredScheduler": "InverseSquaredScheduler",

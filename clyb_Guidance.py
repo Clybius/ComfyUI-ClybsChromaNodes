@@ -203,9 +203,14 @@ class ClybGuidance:
 
             # 1. Move to Frequency domain using 2D Fast Fourier Transform
             # We use norm='ortho' to ensure the transform is unitary and preserves energy.
-            fft_cond = torch.fft.fftshift(torch.fft.fftn(cond.to(torch.float64), norm='ortho'))
-            fft_uncond = torch.fft.fftshift(torch.fft.fftn(uncond.to(torch.float64), norm='ortho'))
-            fft_out = torch.fft.fftshift(torch.fft.fftn(out.to(torch.float64), norm='ortho'))
+            device = cond.device
+            is_mps = device.type == "mps" if isinstance(device, torch.device) else "mps" in str(device)
+            precision_dtype = torch.float32 if is_mps else torch.float64
+            complex_dtype = torch.cfloat if is_mps else torch.cdouble
+
+            fft_cond = torch.fft.fftshift(torch.fft.fftn(cond.to(precision_dtype), norm='ortho'))
+            fft_uncond = torch.fft.fftshift(torch.fft.fftn(uncond.to(precision_dtype), norm='ortho'))
+            fft_out = torch.fft.fftshift(torch.fft.fftn(out.to(precision_dtype), norm='ortho'))
 
             # 1. Create the 2D Hann window kernel for convolution
             hann_1d = torch.signal.windows.hann(5, device=cond.device)
@@ -226,7 +231,7 @@ class ClybGuidance:
             fft_cond_real = fft_cond_flat.real
             fft_uncond_real = fft_uncond_flat.real
             #guidance_direction = (cond - uncond)
-            local_avg_magnitude = F.conv1d(fft_cond_real, kernel.to(torch.float64), padding='same')
+            local_avg_magnitude = F.conv1d(fft_cond_real, kernel.to(precision_dtype), padding='same')
 
             # 3. Normalize the magnitude map for each image in the batch to the [0, 1] range
             # This makes the `strength` parameter behave consistently across different images.
@@ -250,7 +255,7 @@ class ClybGuidance:
 
             print(local_scale)
 
-            guided_tensor = fft_cond + (local_scale.to(torch.cdouble) * (fft_cond_flat - fft_uncond_flat)).view(fft_cond.shape)
+            guided_tensor = fft_cond + (local_scale.to(complex_dtype) * (fft_cond_flat - fft_uncond_flat)).view(fft_cond.shape)
 
             guided_tensor = torch.fft.ifftshift(guided_tensor)
             guided_tensor = torch.fft.ifftn(guided_tensor, norm='ortho').real
